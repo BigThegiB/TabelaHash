@@ -24,16 +24,11 @@ public class TabelaHashEncadeado {
     }
 
 
-
-
-
-
-
-    public int hash(int chave){
+    public int hash(int chave) {
         return chave % this.tamanho;
     }
 
-    public No busca_hashing(int chave){
+    public No busca_hashing(int chave) {
         int i = hash(chave);
 
         if (tabela[i] == null) return null;
@@ -44,13 +39,13 @@ public class TabelaHashEncadeado {
             return atual;
         }
     }
+
     public void imprimir_lista(int chave) {
         int i = hash(chave);
 
         if (tabela[i] == null) {
             System.out.println("Posição vazia");
-        }
-        else {
+        } else {
             No atual = tabela[i];
             System.out.print(atual.chave);
             atual = atual.prox;
@@ -69,15 +64,34 @@ public class TabelaHashEncadeado {
         int tamanho_lista = 1;
         if (tabela[i] != null) {
             No atual = tabela[i];
+            No novo = new No(chave);
             tamanho_lista++;
-            while (atual.prox != null) {
-                atual = atual.prox;
-                tamanho_lista++;
+            if (atual.chave > chave) {
+                novo.prox = atual;
+                tabela[i] = novo;
+                while (atual.prox != null) {
+                    atual = atual.prox;
+                    tamanho_lista++;
+                }
+            } else {
+                boolean adicionado = false;
+                while (atual.prox != null) {
+                    if (atual.prox.chave > chave && !adicionado) {
+                        novo.prox = atual.prox;
+                        atual.prox = novo;
+                        adicionado = true;
+                    }
+                    else {
+                        tamanho_lista++;
+                    }
+                    atual = atual.prox;
+                }
+                if (!adicionado) {
+                    atual.prox = novo;
+                }
             }
-            atual.prox = new No(chave);
 
-        }
-        else tabela[i] = new No(chave);
+        } else tabela[i] = new No(chave);
         this.qtd_itens++;
         return tamanho_lista;
     }
@@ -95,7 +109,7 @@ public class TabelaHashEncadeado {
         System.out.println(qtd_vazias + " posições ficaram vazias");
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Random rng = new Random(1090);
         TabelaHashEncadeado tabela = new TabelaHashEncadeado(100);
 
